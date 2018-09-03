@@ -15,6 +15,18 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Requirements
+ *
+ *     1) Should have a start, stop reset button
+ *
+ *     2) When backing out of the app and app is destroyed should remember
+ *        where it left off, and when restarted start at that point.
+ *
+ *     3) When hitting home button and app is not destroyed it keeps counting
+ *        in the background (is this good behavior?)
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     Button start = null;
@@ -56,8 +68,13 @@ public class MainActivity extends AppCompatActivity {
         long count = getPreferences(MODE_PRIVATE).getLong("COUNT", 0);
         start.setEnabled(getPreferences(MODE_PRIVATE).getBoolean("START_ENABLED", true));
 
-        this.c = new Counter(count);
-        this.t = new Timer();
+        if (this.c == null) {
+            this.c = new Counter(0);
+            this.t = new Timer();
+        }
+        else {
+            this.c.count = count;
+        }
 
         // if the start button is not enabled then it must be running
         // when paused, so need to
